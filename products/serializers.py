@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Product, Category, Tag, Movie, Director, Review
 from rest_framework.exceptions import ValidationError
 
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
