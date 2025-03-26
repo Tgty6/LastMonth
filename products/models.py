@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class AbstractNameModel(models.Model):
     class Meta:
         abstract = True
