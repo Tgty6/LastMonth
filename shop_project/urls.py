@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from products.views import movie_list_reviews_api_view, director_list_api_view
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/products/', include('products.urls')),
