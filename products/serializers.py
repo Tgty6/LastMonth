@@ -63,12 +63,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Рейтинг должен быть от 1 до 5.")
         return value
 
-    def validate_review_text(self, value):
-        if len(value) < 10:
-            raise serializers.ValidationError("Текст отзыва должен содержать хотя бы 10 символов.")
-        return value
-
-
 class MovieSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)
     rating = serializers.FloatField()
