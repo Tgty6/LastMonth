@@ -1,6 +1,7 @@
-from collections import OrderedDict
 
+from collections import OrderedDict
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Product, Category, Tag, Movie, Director, Reviews
@@ -79,22 +80,67 @@ class TagViewSet(ModelViewSet):
     pagination_class = CustomPagination
     lookup_field = 'id'
 
+@api_view(['GET', 'PUT', 'DELETE'])
+def movie_list_reviews_api_view(request, id):
+    try:
+        movie = Movie.objects.get(id=id)
+    except Movie.DoesNotExist:
+        return Response(data={'error': 'Movie not found!'},
+                        status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET'])
-def movie_list_reviews_api_view(request):
-    movies = Movie.objects.prefetch_related('reviews').annotate(
-        rating=Avg('reviews__stars')
-    )
-    data = MovieSerializer(movies, many=True).data
-    return Response(data=data)
+    if request.method == 'GET':
+        data = MovieSerializer(movie, many=False).data
+        return Response(data=data)
+
+    elif request.method == 'DELETE':
+        movie.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    elif request.method == 'PUT':
+        serializer = MovieSerializer(movie, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def director_list_api_view(request):
-    directors = Director.objects.annotate(movies_count=Count('movies'))
-    data = DirectorSerializer(directors, many=True).data
-    return Response(data=data)
+    if request.method == 'GET':
+        directors = Director.objects.annotate(movies_count=Count('movies'))
+        serializer = DirectorSerializer(directors, many=True)
+        return Response(serializer.data)
 
+    elif request.method == 'POST':
+        serializer = DirectorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def director_detail_api_view(request, id):
+    try:
+        director = Director.objects.get(id=id)
+    except Director.DoesNotExist:
+        return Response(data={'error': 'Режиссер не найден.'},
+                        status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = DirectorSerializer(director)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = DirectorSerializer(director, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        director.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 def product_detail_api_view(request, id):
     try:
@@ -102,12 +148,15 @@ def product_detail_api_view(request, id):
     except Product.DoesNotExist:
         return Response(data={'error': 'Product not found!'},
                         status=status.HTTP_404_NOT_FOUND)
+
     if request.method == 'GET':
         data = ProductDetailSerializer(product, many=False).data
         return Response(data=data)
+
     elif request.method == 'DELETE':
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
     elif request.method == 'PUT':
         serializer = ProductValidateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -121,4 +170,3 @@ def product_detail_api_view(request, id):
         product.save()
         return Response(data=ProductDetailSerializer(product).data,
                         status=status.HTTP_201_CREATED)
-

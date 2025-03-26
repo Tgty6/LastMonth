@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Product, Category, Tag, Movie, Director, Review
 from rest_framework.exceptions import ValidationError
 
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -57,6 +58,16 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = 'id text stars'.split()
 
+    def validate_stars(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("Рейтинг должен быть от 1 до 5.")
+        return value
+
+    def validate_review_text(self, value):
+        if len(value) < 10:
+            raise serializers.ValidationError("Текст отзыва должен содержать хотя бы 10 символов.")
+        return value
+
 
 class MovieSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)
@@ -66,9 +77,19 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = 'id name reviews rating'.split()
 
+    def validate_title(self, value):
+        if Movie.objects.filter(title=value).exists():
+            raise serializers.ValidationError("Фильм с таким названием уже существует.")
+        return value
+
 class DirectorSerializer(serializers.ModelSerializer):
     movies_count = serializers.IntegerField()
 
     class Meta:
         model = Director
         fields = 'id name movies_count'.split()
+
+    def validate_name(self, value):
+        if Director.objects.filter(name=value).exists():
+            raise serializers.ValidationError("Режиссер с таким именем уже существует.")
+        return value
