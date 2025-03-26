@@ -1,9 +1,5 @@
 
-<<<<<<< HEAD
 from collections import OrderedDict
-=======
-
->>>>>>> 09e02eb3bf1c7604069677289a65497ad519c106
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -85,7 +81,7 @@ class TagViewSet(ModelViewSet):
     lookup_field = 'id'
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def movie_list_reviews_api_view(request, id):
+def movie_detail_api_view(request, id):
     try:
         movie = Movie.objects.get(id=id)
     except Movie.DoesNotExist:
