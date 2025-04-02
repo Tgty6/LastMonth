@@ -12,6 +12,7 @@ class AbstractNameModel(models.Model):
         return self.name
 
 
+
 class Category(AbstractNameModel):
     parent = models.ForeignKey('self', on_delete=models.CASCADE,
                                null=True, blank=True)

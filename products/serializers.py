@@ -87,3 +87,5 @@ class DirectorSerializer(serializers.ModelSerializer):
         if Director.objects.filter(name=value).exists():
             raise serializers.ValidationError("Режиссер с таким именем уже существует.")
         return value
+
+

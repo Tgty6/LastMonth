@@ -16,5 +16,4 @@ urlpatterns = [
     path('api/v1/directors/<int:id>/', DirectorDetailAPIView.as_view(), name='director-detail'),
 
 ]
-
 urlpatterns += swagger.urlpatterns
