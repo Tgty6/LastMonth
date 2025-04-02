@@ -5,7 +5,6 @@ from django.db import models
 
 class CustomUser(AbstractUser):
     is_active = models.BooleanField(default=False)
-    confirmation_code = models.CharField(max_length=6, blank=True, null=True)
 
     groups = models.ManyToManyField(
         "auth.Group",
@@ -17,8 +16,4 @@ class CustomUser(AbstractUser):
         related_name="custom_users",
         blank=True
     )
-
-    def generate_confirmation_code(self):
-        self.confirmation_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
-        self.save()
 
