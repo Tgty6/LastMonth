@@ -24,22 +24,3 @@ class UserRegisterSerializer(UserBaseSerializer):
         user = CustomUser.objects.create_user(**validated_data, is_active=False)
         user.generate_confirmation_code()
         return user
-
-
-class UserConfirmSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=150)
-    confirmation_code = serializers.CharField(max_length=6)
-
-    def validate(self, data):
-        username = data.get('username')
-        code = data.get('confirmation_code')
-
-        try:
-            user = CustomUser.objects.get(username=username)
-        except CustomUser.DoesNotExist:
-            raise ValidationError({'username': 'User not found!'})
-
-        if user.confirmation_code != code:
-            raise ValidationError({'confirmation_code': 'Invalid confirmation code!'})
-
-        return data
