@@ -32,18 +32,3 @@ def registration_api_view(request):
 def user_detail_api_view(request):
     user = request.user
     return Response({'username': user.username, 'is_active': user.is_active})
-
-
-
-@api_view(['POST'])
-def confirm_user_view(request):
-    serializer = UserConfirmSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-
-    username = serializer.validated_data.get('username')
-    user = CustomUser.objects.get(username=username)
-    user.is_active = True
-    user.confirmation_code = None
-    user.save()
-
-    return Response({'message': 'User successfully confirmed!'}, status=status.HTTP_200_OK)
