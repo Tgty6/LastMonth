@@ -1,13 +1,21 @@
-from django.urls import path
-from products import views
-from utils.constants import LIST_CREATE, RETRIEVE_UPDATE_DESTROY
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
+from .views import (ProductListCreateAPIView,
+                    CategoryListCreateAPIView,
+                    CategoryDetailAPIView, TagViewSet,
+                    MovieDetailAPIView, DirectorListCreateAPIView,
+                    DirectorDetailAPIView)
+
+router = DefaultRouter()
+router.register(r'tags', TagViewSet)
 
 urlpatterns = [
-    path('', views.ProductListCreateAPIView.as_view()),
-    path('<int:id>/', views.product_detail_api_view),
-    path('categories/', views.CategoryListCreateAPIView.as_view()),
-    path('categories/<int:id>/', views.CategoryDetailAPIView.as_view()),
-    path('tags/', views.TagViewSet.as_view(LIST_CREATE)),
-    path('tags/<int:id>/', views.TagViewSet.as_view(RETRIEVE_UPDATE_DESTROY)),
+    path('products/', ProductListCreateAPIView.as_view(), name='product-list-create'),
+    path('categories/', CategoryListCreateAPIView.as_view(), name='category-list-create'),
+    path('categories/<int:id>/', CategoryDetailAPIView.as_view(), name='category-detail'),
+    path('', include(router.urls)),
+    path('movies/<int:id>/', MovieDetailAPIView.as_view(), name='movie-detail'),
+    path('directors/', DirectorListCreateAPIView.as_view(), name='director-list-create'),
+    path('directors/<int:id>/', DirectorDetailAPIView.as_view(), name='director-detail'),
 ]
