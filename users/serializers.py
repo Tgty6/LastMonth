@@ -13,8 +13,6 @@ class UserAuthSerializer(UserBaseSerializer):
 
 
 class UserRegisterSerializer(UserBaseSerializer):
-    confirmation_code = serializers.CharField(max_length=6, read_only=True)
-
     def validate_username(self, username):
         if CustomUser.objects.filter(username=username).exists():
             raise ValidationError('User already exists!')
@@ -22,5 +20,4 @@ class UserRegisterSerializer(UserBaseSerializer):
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(**validated_data, is_active=False)
-        user.generate_confirmation_code()
         return user
