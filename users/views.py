@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 
 
+
 class AuthAPIView(APIView):
     def post(self, request):
         serializer = UserAuthSerializer(data=request.data)
