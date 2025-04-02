@@ -19,7 +19,7 @@ class AuthAPIView(APIView):
         if user and user.is_active:
             token, _ = Token.objects.get_or_create(user=user)
             return Response(data={'key': token.key})
-        return Response(status=status.HTTP_401_UNAUTHORIZED, data={'error': 'Invalid credentials or user not confirmed'})
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class RegistrationAPIView(APIView):
