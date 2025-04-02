@@ -29,7 +29,7 @@ class RegistrationAPIView(APIView):
         serializer = UserRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response({'user_id': user.id, 'confirmation_code': user.confirmation_code}, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class UserDetailAPIView(APIView):
