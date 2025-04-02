@@ -42,10 +42,7 @@ class Movie(models.Model):
         return 0
 
 
-STARS = (
-    (i, '* ' * i) for i in range(1, 6)
-)
-
+STARS = [(i, str(i)) for i in range(1, 6)]
 
 class Review(models.Model):
     text = models.CharField(max_length=255)
